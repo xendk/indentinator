@@ -136,7 +136,6 @@ Schedules re-indentation of following text."
   
   (let ((indentinator-indenting t)
         (previous-current (copy-marker indentinator-current-marker)))
-    ;;(force-mode-line-update)
     (when (indentinator-indent-one)
       (setq indentinator-last-indented-marker
             (copy-marker indentinator-current-marker)))
