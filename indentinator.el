@@ -145,10 +145,14 @@ Schedules re-indentation of following text."
       (goto-char (marker-position indentinator-current-marker))
       (forward-line)
       (set-marker indentinator-current-marker (point)))
-    (if (and (not (equal indentinator-current-marker previous-current))
-             (or (not indentinator-last-indented-marker)
-                 (> 4 (count-lines (marker-position indentinator-last-indented-marker)
-                                   (marker-position indentinator-current-marker)))))
+    (if (and
+         ;; Only run if we moving the marker and not at end of buffer.
+         (not (equal indentinator-current-marker previous-current))
+         ;; And there's not been more than 3 unchanged lines since
+         ;; last indent or start.
+         (> 4 (count-lines (marker-position (or indentinator-last-indented-marker
+                                                indentinator-start-marker))
+                           (marker-position indentinator-current-marker))))
         (if (input-pending-p)
             ;; Pending input, abort. Append current position to aborted list.
             (setq indentinator-aborted-markers (cons indentinator-current-marker
