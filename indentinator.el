@@ -119,7 +119,8 @@ BEG and END mark the beginning and end of the change text.  _LEN
 is ignored.
 
 Schedules re-indentation of following text."
-  (when (and (not undo-in-progress)
+  (when (and (not indentinator-indenting)
+             (not undo-in-progress)
              indentinator-mode)
     ;; TODO: is this still relevant?
     (let ((indentinator-indenting t))
