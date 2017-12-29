@@ -55,7 +55,7 @@
   "Marks the start of the current indent run.")
 (make-variable-buffer-local 'indentinator-start-marker)
 
-(defvar indentinator-current-marker (make-marker)
+(defvar indentinator-current-marker nil
   "The marker of the next indent action.")
 (make-variable-buffer-local 'indentinator-current-marker)
 
@@ -66,6 +66,10 @@
 (defvar indentinator-aborted-markers (list)
   "Markers for `indentinator-current-marker' of aborted indents.")
 (make-variable-buffer-local 'indentinator-aborted-markers)
+
+(defvar indentinator-changed-markers (list)
+  "Markers for text changes needing re-indenting.")
+(make-variable-buffer-local 'indentinator-changed-markers)
 
 (defvar indentinator-indenting nil
   "Whether an indenting action is currently in progress.")
@@ -85,6 +89,30 @@
       (add-hook 'after-change-functions 'indentinator-after-change-function t t)
     (remove-hook 'after-change-functions 'indentinator-after-change-function t)))
 
+(defmacro indentinator-queue-timer (&optional init)
+  "Add idle-timer. Set INIT to t if this is the initial call."
+  `(progn
+     (message "indentinator: setting timer")
+     (setq indentinator-idle-timer
+         (run-with-idle-timer
+          (if ,init 0.01 (time-add (current-idle-time) 0.01))
+          nil
+          'indentinator-idle-timer-function))))
+
+(defmacro indentinator-init-indent (start)
+  "Initialize re-indenting from marker START."
+  `(progn
+     (setq indentinator-start-marker ,start)
+     (setq indentinator-current-marker (copy-marker indentinator-start-marker))
+     (setq indentinator-last-indented-marker nil)))
+
+(defmacro indentinator-filter-markers (markers start stop)
+  "Filter MARKERS for markers between START and STOP markers."
+  `(setq ,markers (seq-filter (lambda (marker)
+                                (and (> (marker-position marker) (marker-position ,start))
+                                     (< (marker-position marker) (marker-position ,stop))))
+                              ,markers)))
+
 (defun indentinator-after-change-function (start end _len)
   "Handles buffer change between START and END.
 
@@ -92,9 +120,9 @@ BEG and END mark the beginning and end of the change text.  _LEN
 is ignored.
 
 Schedules re-indentation of following text."
-  (when (and (not indentinator-indenting)
-             (not undo-in-progress)
+  (when (and (not undo-in-progress)
              indentinator-mode)
+    ;; TODO: is this still relevant?
     (let ((indentinator-indenting t))
       (when indentinator-debug
         (message "indentinator: after-change %d %d" start end))
@@ -102,15 +130,9 @@ Schedules re-indentation of following text."
       (save-excursion
         (goto-char end)
         (forward-line 1)
-        (set-marker indentinator-start-marker (point))
-        (setq indentinator-current-marker
-              (copy-marker indentinator-start-marker))
-        (setq indentinator-last-indented-marker nil)
-        (setq indentinator-idle-timer
-              (run-with-idle-timer
-               0.1
-               nil
-               'indentinator-idle-timer-function))))))
+        (setq indentinator-changed-markers (cons (point-marker)
+                                                 indentinator-changed-markers))
+        (indentinator-queue-timer t)))))
 
 (defun indentinator-indent ()
   "Testing function."
@@ -123,67 +145,76 @@ Schedules re-indentation of following text."
   (setq indentinator-current-marker
         (copy-marker indentinator-start-marker))
   (setq indentinator-last-indented-marker nil)
-  (setq indentinator-idle-timer
-        (run-with-idle-timer
-         0.1
-         nil
-         'indentinator-idle-timer-function)))
+  (indentinator-queue-timer))
 
 (defun indentinator-idle-timer-function ()
   "Idle timer function for re-indenting text."
+  (when indentinator-debug
+      (message "indentinator: timer called"))
   (when indentinator-idle-timer
     (cancel-timer indentinator-idle-timer)
     (setq indentinator-idle-timer nil))
-  
-  (let ((indentinator-indenting t)
-        (previous-current (copy-marker indentinator-current-marker)))
-    (when (indentinator-indent-one)
-      (setq indentinator-last-indented-marker
-            (copy-marker indentinator-current-marker)))
-    ;; Move marker to next indent point.
-    (save-excursion
-      (goto-char (marker-position indentinator-current-marker))
-      (forward-line)
-      (set-marker indentinator-current-marker (point)))
-    (if (and
-         ;; Only run if we moving the marker and not at end of buffer.
-         (not (equal indentinator-current-marker previous-current))
-         ;; And there's not been more than 3 unchanged lines since
-         ;; last indent or start.
-         (> 4 (count-lines (marker-position (or indentinator-last-indented-marker
-                                                indentinator-start-marker))
-                           (marker-position indentinator-current-marker))))
-        (if (input-pending-p)
-            ;; Pending input, abort. Append current position to aborted list.
-            (setq indentinator-aborted-markers (cons indentinator-current-marker
-                                                     indentinator-aborted-markers))
-          ;; Schedule next indent.
-          (setq indentinator-idle-timer
-                (run-with-idle-timer
-                 (time-add (current-idle-time) 0.01)
-                 nil
-                 'indentinator-idle-timer-function)))
-      ;; Else handle previously aborted indents.
-      (progn
-        ;; Filter out aborted markers we'd accidentally processed in the
-        ;; last indent.
-        (setq indentinator-aborted-markers
-              (seq-filter (lambda (marker)
-                            (and (> (marker-position marker)
-                                    (marker-position indentinator-start-marker))
-                                 (< (marker-position marker)
-                                    (marker-position indentinator-current-marker))))
-                          indentinator-aborted-markers))
-        (when indentinator-aborted-markers
-          (setq indentinator-start-marker (car indentinator-aborted-markers))
-          (setq indentinator-aborted-markers (cdr indentinator-aborted-markers))
-          (setq indentinator-current-marker (copy-marker indentinator-start-marker))
-          (setq indentinator-last-indented-marker nil)
-          (setq indentinator-idle-timer
-                (run-with-idle-timer
-                 (time-add (current-idle-time) 0.01)
-                 nil
-                 'indentinator-idle-timer-function)))))))
+
+  ;; If not currently indenting, see if there's any changed regions.
+  (when (and (not indentinator-current-marker)
+             indentinator-changed-markers)
+    ;; Sort in buffer order.
+    (setq indentinator-changed-markers
+          (seq-sort (lambda (a b)
+                      (< (marker-position a) (marker-position b)))
+                    indentinator-changed-markers))
+    (indentinator-init-indent (car indentinator-changed-markers))
+    (setq indentinator-changed-markers (cdr indentinator-changed-markers))
+    (when indentinator-debug
+      (message "indentinator: grabbing change %d"
+               (marker-position indentinator-current-marker))))
+  ;; ...or aborted indents pendning.
+  (when (and (not indentinator-current-marker)
+             indentinator-aborted-markers)
+    (indentinator-init-indent (car indentinator-aborted-markers))
+    (setq indentinator-aborted-markers (cdr indentinator-aborted-markers))
+    (when indentinator-debug
+      (message "indentinator: grabbing aborted %d"
+               (marker-position indentinator-current-marker))))
+
+  (when indentinator-current-marker
+    (let ((indentinator-indenting t)
+          (previous-current (copy-marker indentinator-current-marker)))
+      
+      ;; Indent one line.
+      (when (indentinator-indent-one)
+        (setq indentinator-last-indented-marker
+              (copy-marker indentinator-current-marker)))
+      ;; Move marker to next indent point.
+      (save-excursion
+        (goto-char (marker-position indentinator-current-marker))
+        (forward-line)
+        (set-marker indentinator-current-marker (point)))
+      (if (and
+           ;; Only run if we moving the marker and not at end of buffer.
+           (not (equal indentinator-current-marker previous-current))
+           ;; And there's not been more than 3 unchanged lines since
+           ;; last indent or start.
+           (> 4 (count-lines (marker-position (or indentinator-last-indented-marker
+                                                  indentinator-start-marker))
+                             (marker-position indentinator-current-marker))))
+          (if (input-pending-p)
+              ;; Pending input, abort. Append current position to aborted list.
+              (setq indentinator-aborted-markers (cons indentinator-current-marker
+                                                       indentinator-aborted-markers)
+                    indentinator-current-marker nil)
+            ;; Schedule next indent.
+            (indentinator-queue-timer))
+        (progn
+          ;; Filter out changed and aborted markers we'd accidentally
+          ;; processed in the last indent.
+          (indentinator-filter-markers indentinator-changed-markers
+                                       indentinator-start-marker
+                                       indentinator-current-marker)
+          (indentinator-filter-markers indentinator-aborted-markers
+                                       indentinator-start-marker
+                                       indentinator-current-marker)
+          (setq indentinator-current-marker nil))))))
 
 (defun indentinator-indent-one ()
   "Re-indent one line at `indentinator-current-marker'.
