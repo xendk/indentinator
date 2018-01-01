@@ -1,5 +1,6 @@
 (require 'f)
 (require 'with-simulated-input)
+(require 'shut-up)
 
 (defvar indentinator-support-path
   (f-dirname load-file-name))

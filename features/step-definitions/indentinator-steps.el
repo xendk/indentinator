@@ -23,3 +23,9 @@
     (let ((actual (buffer-string))
           (message "Expected '%s' to be equal to '%s', but was not."))
       (cl-assert (s-equals? expected actual) nil message expected actual))))
+
+(When "^I quietly turn on \\(.+\\)$"
+  "Turns on some mode, without output cluttering test output."
+  (lambda (mode)
+    (let ((v (vconcat [?\C-u ?\M-x] (string-to-vector mode))))
+      (shut-up (execute-kbd-macro v)))))

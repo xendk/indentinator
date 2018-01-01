@@ -10,4 +10,6 @@
  (depends-on "el-mock")
  (depends-on "buttercup")
  ;; For simulating idle time.
- (depends-on "with-simulated-input"))
+ (depends-on "with-simulated-input")
+ ;; To quiet output in tests.
+ (depends-on "shut-up"))
