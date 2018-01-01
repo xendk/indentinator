@@ -27,22 +27,9 @@
 
 ;;; Code:
 
-;; Mode line indicator indicating running indent.
+;; Move setting of indentinator-indenting inside indentinator-indent-one.
 
 ;; Maybe advice save-buffer when indenting is running.
-
-;; When stopped: note down last line changed in xen-aborted-indents
-;; (use a mark).
-;; When stopping indent because X lines in a row didn't change, delete
-;; from xen-aborted-indents where mark is between start of
-;; indent and end of indent.
-;; Continue indenting from first in xen-aborted-indents, rinse and repeat.
-
-;; An after-change-functions that notes down changed pairs. Idle
-;; function processes them. It indents the last one first. Afterwards
-;; it idle indents afterwards. After that again, it starts with the
-;; earliest region and loops them through (need to mark the regions
-;; with markers?).
 
 ;; Doens't indent current line. Feature?
 
