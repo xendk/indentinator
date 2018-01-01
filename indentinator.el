@@ -224,7 +224,7 @@ Return whether the line changed."
       (when indentinator-debug
         (message "indentinator: indent %d" (marker-position indentinator-current-marker)))
       (cl-letf (((symbol-function 'message) #'ignore))
-        (ignore-errors (funcall indent-line-function)))
+        (ignore-errors (indent-region (line-beginning-position) (line-end-position))))
       (not (= tick (buffer-chars-modified-tick))))))
 
 (provide 'indentinator)
