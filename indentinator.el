@@ -59,9 +59,9 @@
   "The marker of the next indent action.")
 (make-variable-buffer-local 'indentinator-current-marker)
 
-(defvar indentinator-last-indented-marker nil
-  "The marker of the last indented position.")
-(make-variable-buffer-local 'indentinator-last-indented-marker)
+(defvar indentinator-no-indent-count 0
+  "Number of lines not changed.")
+(make-variable-buffer-local 'indentinator-no-indent-count)
 
 (defvar indentinator-aborted-markers (list)
   "Markers for `indentinator-current-marker' of aborted indents.")
@@ -103,7 +103,7 @@
   `(progn
      (setq indentinator-start-marker ,start)
      (setq indentinator-current-marker (copy-marker indentinator-start-marker))
-     (setq indentinator-last-indented-marker nil)))
+     (setq indentinator-no-indent-count 0)))
 
 (defmacro indentinator-filter-markers (markers start stop)
   "Filter MARKERS for markers between START and STOP markers."
@@ -144,7 +144,7 @@ Schedules re-indentation of following text."
     (set-marker indentinator-start-marker (point)))
   (setq indentinator-current-marker
         (copy-marker indentinator-start-marker))
-  (setq indentinator-last-indented-marker nil)
+  (setq indentinator-no-indent-count 0)
   (indentinator-queue-timer))
 
 (defun indentinator-idle-timer-function ()
@@ -182,9 +182,8 @@ Schedules re-indentation of following text."
           (previous-current (copy-marker indentinator-current-marker)))
       
       ;; Indent one line.
-      (when (indentinator-indent-one)
-        (setq indentinator-last-indented-marker
-              (copy-marker indentinator-current-marker)))
+      (setq indentinator-no-indent-count
+            (if (indentinator-indent-one) 0 (1+ indentinator-no-indent-count)))
       ;; Move marker to next indent point.
       (save-excursion
         (goto-char (marker-position indentinator-current-marker))
@@ -193,11 +192,9 @@ Schedules re-indentation of following text."
       (if (and
            ;; Only run if we moving the marker and not at end of buffer.
            (not (equal indentinator-current-marker previous-current))
-           ;; And there's not been more than 3 unchanged lines since
-           ;; last indent or start.
-           (> 4 (count-lines (marker-position (or indentinator-last-indented-marker
-                                                  indentinator-start-marker))
-                             (marker-position indentinator-current-marker))))
+           ;; And there's not been more than 2 unchanged lines since
+           ;; last indent.
+           (>= 2 indentinator-no-indent-count))
           (if (input-pending-p)
               ;; Pending input, abort. Append current position to aborted list.
               (setq indentinator-aborted-markers (cons indentinator-current-marker
