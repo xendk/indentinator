@@ -76,6 +76,7 @@
 (defvar indentinator-debug nil
   "Enables debugging output.")
 
+;;;###autoload
 (defun indentinator-toggle-debug ()
   "Toggle debugging."
   (interactive)
