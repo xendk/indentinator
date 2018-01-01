@@ -1,6 +1,5 @@
 Feature: Regression test - overeager indenting
 
-
   Scenario: Earlier indenting shouldn't override indenting current line
     Given I am in a new buffer "test" with the content:
       """
