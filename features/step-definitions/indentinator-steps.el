@@ -2,9 +2,11 @@
 ;; files in this directory whose names end with "-steps.el" will be
 ;; loaded automatically by Ecukes.
 
-(Given "^I am in buffer \"\\([^\"]+\\)\" with the content:$"
+(Given "^I am in a new buffer \"\\([^\"]+\\)\" with the content:$"
   "Switches to buffer and ensure it has the given content."
   (lambda (buffer contents)
+    ;; Ensure we're starting afresh.
+    (ignore-errors (kill-buffer buffer))
     (Given "I am in buffer \"%s\"" buffer)
     (Given "I clear the buffer")
     (When "I insert:" contents)))
