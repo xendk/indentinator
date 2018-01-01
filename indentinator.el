@@ -47,6 +47,17 @@
 ;; Doens't indent current line. Feature?
 
 (require 'seq)
+(require 'faces)
+
+(defgroup indentinator nil
+  "Indentinator configuration."
+  :prefix "indentinator-"
+  :group 'editing)
+
+(defface indentinator-progress-face
+  '((t :inherit font-lock-warning-face))
+  "Face used for mode-line indicator when indent is currently running."
+  :group 'indentinator)
 
 (defvar indentinator-idle-timer nil
   "Idle timer for processing re-indentation.")
@@ -84,7 +95,9 @@
   (setq indentinator-debug (not indentinator-debug)))
 
 (define-minor-mode indentinator-mode nil
-  :lighter (:eval (if indentinator-idle-timer " ->" ""))
+  :lighter (:eval (if indentinator-idle-timer
+                      (propertize " ->" 'face 'indentinator-progress-face)
+                    " ->"))
   (if indentinator-mode
       (add-hook 'after-change-functions 'indentinator-after-change-function t t)
     (remove-hook 'after-change-functions 'indentinator-after-change-function t)))
