@@ -49,7 +49,7 @@
 (require 'seq)
 
 (defvar indentinator-idle-timer nil
-  "Idle timer for processing indentation.")
+  "Idle timer for processing re-indentation.")
 
 (defvar indentinator-start-marker (make-marker)
   "Marks the start of the current indent run.")
