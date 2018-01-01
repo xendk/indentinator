@@ -92,11 +92,12 @@
 (defmacro indentinator-queue-timer (&optional init)
   "Add idle-timer. Set INIT to t if this is the initial call."
   `(progn
-     (setq indentinator-idle-timer
-           (run-with-idle-timer
-            (if ,init 0.01 (time-add (current-idle-time) 0.01))
-            nil
-            'indentinator-idle-timer-function))))
+     (unless indentinator-idle-timer
+       (setq indentinator-idle-timer
+             (run-with-idle-timer
+              (if ,init 0.01 (time-add (current-idle-time) 0.01))
+              nil
+              'indentinator-idle-timer-function)))))
 
 (defmacro indentinator-init-indent (start)
   "Initialize re-indenting from marker START."
