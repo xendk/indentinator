@@ -124,16 +124,15 @@ Schedules re-indentation of following text."
              (not undo-in-progress)
              indentinator-mode)
     ;; TODO: is this still relevant?
-    (let ((indentinator-indenting t))
-      (when indentinator-debug
-        (message "indentinator: after-change %d %d" start end))
-      ;; Set up an idle timer to reindent after the changed region.
-      (save-excursion
-        (goto-char end)
-        (forward-line 1)
-        (setq indentinator-changed-markers (cons (point-marker)
-                                                 indentinator-changed-markers))
-        (indentinator-queue-timer t)))))
+    (when indentinator-debug
+      (message "indentinator: after-change %d %d" start end))
+    ;; Set up an idle timer to reindent after the changed region.
+    (save-excursion
+      (goto-char end)
+      (forward-line 1)
+      (setq indentinator-changed-markers (cons (point-marker)
+                                               indentinator-changed-markers))
+      (indentinator-queue-timer t))))
 
 (defun indentinator-indent ()
   "Testing function."
@@ -179,9 +178,8 @@ Schedules re-indentation of following text."
                (marker-position indentinator-current-marker))))
 
   (when indentinator-current-marker
-    (let ((indentinator-indenting t)
-          (previous-current (copy-marker indentinator-current-marker)))
-      
+    (let ((previous-current (copy-marker indentinator-current-marker)))
+
       ;; Indent one line.
       (setq indentinator-no-indent-count
             (if (indentinator-indent-one) 0 (1+ indentinator-no-indent-count)))
@@ -219,7 +217,8 @@ Schedules re-indentation of following text."
 
 Return whether the line changed."
   (save-excursion
-    (let ((tick (buffer-chars-modified-tick)))
+    (let ((tick (buffer-chars-modified-tick))
+          (indentinator-indenting t))
       (goto-char (marker-position indentinator-current-marker))
       (when indentinator-debug
         (message "indentinator: indent %d" (marker-position indentinator-current-marker)))
