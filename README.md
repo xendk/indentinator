@@ -21,7 +21,7 @@ until re-indenting doesn't change indentation for 2 consecutive lines.
 
 ``` emacs-lisp
 (use-package indentinator
-  :hook ((lisp-mode php-mode js-mode css-mode ruby-mode) . indentinator-mode)
+  :hook ((emacs-lisp-mode php-mode js-mode css-mode ruby-mode) . indentinator-mode)
   :straight (:host github :repo "xendk/indentinator"))
 ```
 
