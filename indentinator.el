@@ -130,7 +130,9 @@ Schedules re-indentation of following text."
       (message "indentinator: after-change %d %d" start end))
     ;; Set up an idle timer to reindent after the changed region.
     (save-excursion
-      (goto-char end)
+      ;; Start re-indenting at the first line after the start of the
+      ;; changed area.
+      (goto-char start)
       (forward-line 1)
       (setq indentinator-changed-markers (cons (point-marker)
                                                indentinator-changed-markers))
