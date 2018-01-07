@@ -24,11 +24,11 @@
 
 ;;; Commentary:
 
-;; 
+;; Indentinator is yet another "auto-indent" mode. Se the README.md
+;; for further documentation or read it online at
+;; https://github.com/xendk/indentinator#indentinator
 
 ;;; Code:
-
-;; Move setting of indentinator-indenting inside indentinator-indent-one.
 
 ;; Maybe advice save-buffer when indenting is running.
 
