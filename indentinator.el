@@ -120,10 +120,10 @@
      (setq indentinator-no-indent-count 0)))
 
 (defmacro indentinator-filter-markers (markers start stop)
-  "Filter MARKERS for markers between START and STOP markers."
+  "Filter MARKERS for markers between START and STOP markers, inclusive."
   `(setq ,markers (seq-filter (lambda (marker)
-                                (and (> (marker-position marker) (marker-position ,start))
-                                     (< (marker-position marker) (marker-position ,stop))))
+                                (or (<= (marker-position marker) (marker-position ,start))
+                                    (>= (marker-position marker) (marker-position ,stop))))
                               ,markers)))
 
 (defun indentinator-after-change-function (start end _len)
@@ -136,18 +136,24 @@ Schedules re-indentation of following text."
   (when (and (not indentinator-indenting)
              (not undo-in-progress)
              indentinator-mode)
-    ;; TODO: is this still relevant?
+    ;; Abort current re-indentation, if one is in progress.
+    (when indentinator-current-marker
+      (setq indentinator-aborted-markers (cons indentinator-current-marker
+                                               indentinator-aborted-markers)
+            indentinator-current-marker nil))
+
     (when indentinator-debug
       (message "indentinator: after-change %d %d" start end))
-    ;; Set up an idle timer to reindent after the changed region.
+
     (save-excursion
-      ;; Start re-indenting at the first line after the start of the
-      ;; changed area.
+      ;; Start re-indenting from the start of the changed area.
       (goto-char start)
       (forward-line 1)
       (setq indentinator-changed-markers (cons (point-marker)
                                                indentinator-changed-markers))
-      (indentinator-queue-timer t))))
+      ;; Schedule idle timer if there's anything to work on.
+      (when (or indentinator-changed-markers indentinator-aborted-markers)
+        (indentinator-queue-timer t)))))
 
 (defun indentinator-indent ()
   "Testing function."
@@ -225,7 +231,10 @@ Schedules re-indentation of following text."
           (indentinator-filter-markers indentinator-aborted-markers
                                        indentinator-start-marker
                                        indentinator-current-marker)
-          (setq indentinator-current-marker nil))))))
+          (setq indentinator-current-marker nil)
+          ;; Schedule re-indent if there's any queued.
+          (when (or indentinator-changed-markers indentinator-aborted-markers)
+            (indentinator-queue-timer)))))))
 
 (defun indentinator-indent-one ()
   "Re-indent one line at `indentinator-current-marker'.
