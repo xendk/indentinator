@@ -5,7 +5,7 @@
 ;; Author: Thomas Fini Hansen <xen@xen.dk>
 ;; Created: December 22, 2017
 ;; Version: 0.0.1
-;; Package-Requires: ((emacs "24") (seq))
+;; Package-Requires: ((emacs "25") (seq))
 ;; Keywords: convenience
 ;; URL: https://github.com/xendk/indentinator
 

@@ -13,6 +13,10 @@ of the most recent change. Basically, it should be re-indenting where
 you're working and if you leave it be, eventually get everything
 re-indented if you make big changes.
 
+# Requirements
+
+Emacs 25.
+
 # Usage
 
 ## Vanilla Emacs
