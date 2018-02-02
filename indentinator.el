@@ -126,6 +126,15 @@
                                     (>= (marker-position marker) (marker-position ,stop))))
                               ,markers)))
 
+(defmacro indentinator-abort-indent ()
+  "Abort current indent, saving starte for resuming."
+  ;; Add changed markers and current position to aborted list.
+  `(setq indentinator-aborted-markers (cons indentinator-current-marker
+                                            (nconc indentinator-changed-markers
+                                                   indentinator-aborted-markers))
+         indentinator-changed-markers (list)
+         indentinator-current-marker nil))
+
 (defun indentinator-after-change-function (start end _len)
   "Handles buffer change between START and END.
 
@@ -137,10 +146,7 @@ Schedules re-indentation of following text."
              (not undo-in-progress)
              indentinator-mode)
     ;; Abort current re-indentation, if one is in progress.
-    (when indentinator-current-marker
-      (setq indentinator-aborted-markers (cons indentinator-current-marker
-                                               indentinator-aborted-markers)
-            indentinator-current-marker nil))
+    (when indentinator-current-marker (indentinator-abort-indent))
 
     (when indentinator-debug
       (message "indentinator: after-change %d %d" start end))
@@ -224,10 +230,8 @@ Schedules re-indentation of following text."
            ;; last indent.
            (>= 2 indentinator-no-indent-count))
           (if (input-pending-p)
-              ;; Pending input, abort. Append current position to aborted list.
-              (setq indentinator-aborted-markers (cons indentinator-current-marker
-                                                       indentinator-aborted-markers)
-                    indentinator-current-marker nil)
+              ;; Pending input, abort.
+              (indentinator-abort-indent)
             ;; Schedule next indent.
             (indentinator-queue-timer))
         (progn
