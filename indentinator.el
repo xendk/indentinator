@@ -47,6 +47,16 @@
   "Face used for mode-line indicator when indent is currently running."
   :group 'indentinator)
 
+(defcustom indentinator-initial-idle-time .01
+  "Time to wait after buffer modifications before starting re-indentation."
+  :type 'number
+  :group 'indentinator)
+
+(defcustom indentinator-idle-time .01
+  "Idle time between re-indentation actions."
+  :type 'number
+  :group 'indentinator)
+
 (defvar indentinator-idle-timer nil
   "Idle timer for processing re-indentation.")
 
@@ -97,7 +107,8 @@
      (unless indentinator-idle-timer
        (setq indentinator-idle-timer
              (run-with-idle-timer
-              (if ,init 0.01 (time-add (current-idle-time) 0.01))
+              (if ,init indentinator-initial-idle-time
+                (time-add (current-idle-time) indentinator-idle-time))
               nil
               'indentinator-idle-timer-function)))))
 
