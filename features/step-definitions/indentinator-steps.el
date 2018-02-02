@@ -13,6 +13,9 @@
 
 (And "^wait for idle timers$"
   "Wait for the given seconds."
+  ;; Considering the comments below, maybe the more stable approach
+  ;; would be simply to call the idle timers manually? Any chance of
+  ;; Emacs calling the idle functions while running the test?
   (lambda ()
     ;; Suppress errors. Something, occasionally, triggers a "Wrong
     ;; type argument: number-or-marker-p, nil" error, but it persists
@@ -20,9 +23,11 @@
     ;; function, so it cannot be an error in indentinator. Haven't
     ;; been able to track it down.
     (condition-case nil
-        ;; Apparently we need to trigger idle-timers twice, as wsi doesn't
-        ;; seem to pick up the added timers the first time?
+        ;; Apparently we need to trigger idle-timers a number of
+        ;; times, as wsi doesn't seem to pick up the added timers, or
+        ;; forgets to run them?
         (progn (wsi-simulate-idle-time nil)
+               (wsi-simulate-idle-time nil)
                (wsi-simulate-idle-time nil))
       (error nil))))
 
