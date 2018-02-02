@@ -148,7 +148,15 @@ Schedules re-indentation of following text."
     (save-excursion
       ;; Start re-indenting from the start of the changed area.
       (goto-char start)
-      (forward-line 1)
+
+      ;; Unless the change is only whitespace, then re-indent from the
+      ;; next line. This means manually indenting a line wont get
+      ;; overridden by indentinator.
+      (when (save-excursion
+              (skip-chars-forward " \t" end)
+              (>= (point) end))
+        (forward-line 1))
+
       (setq indentinator-changed-markers (cons (point-marker)
                                                indentinator-changed-markers))
       ;; Schedule idle timer if there's anything to work on.
