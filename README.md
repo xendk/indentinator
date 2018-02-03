@@ -42,8 +42,8 @@ Emacs 25.
 
 # Configuration
 
-Currently only the face used for the indicator when re-indentation is
-running. More is planned.
+The idle timeouts and the face used for the indicator when re-indentation is
+running can be customized via the customize system.
 
 # Comparison with other packages.
 
