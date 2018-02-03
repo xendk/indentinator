@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/xendk/indentinator.svg?branch=master)](https://travis-ci.org/xendk/indentinator)
+
 Indentinator
 ============
 
