@@ -32,8 +32,6 @@
 
 ;; Maybe advice save-buffer when indenting is running.
 
-;; Doens't indent current line. Feature?
-
 (require 'seq)
 (require 'faces)
 
