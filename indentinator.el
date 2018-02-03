@@ -169,19 +169,6 @@ Schedules re-indentation of following text."
       (when (or indentinator-changed-markers indentinator-aborted-markers)
         (indentinator-queue-timer t)))))
 
-(defun indentinator-indent ()
-  "Testing function."
-  (interactive)
-  (save-excursion
-    ;; Ignore the field boundaries mentioned in the documentation for
-    ;; beginning-of-line.
-    (forward-line 0)
-    (set-marker indentinator-start-marker (point)))
-  (setq indentinator-current-marker
-        (copy-marker indentinator-start-marker))
-  (setq indentinator-no-indent-count 0)
-  (indentinator-queue-timer))
-
 (defun indentinator-idle-timer-function ()
   "Idle timer function for re-indenting text."
   (when indentinator-debug
