@@ -58,32 +58,26 @@
 (defvar indentinator-idle-timer nil
   "Idle timer for processing re-indentation.")
 
-(defvar indentinator-start-marker (make-marker)
-  "Marks the start of the current indent run.")
-(make-variable-buffer-local 'indentinator-start-marker)
-
-(defvar indentinator-current-marker nil
-  "The marker of the next indent action.")
-(make-variable-buffer-local 'indentinator-current-marker)
-
-(defvar indentinator-no-indent-count 0
-  "Number of lines not changed.")
-(make-variable-buffer-local 'indentinator-no-indent-count)
-
-(defvar indentinator-aborted-markers (list)
-  "Markers for `indentinator-current-marker' of aborted indents.")
-(make-variable-buffer-local 'indentinator-aborted-markers)
-
-(defvar indentinator-changed-markers (list)
-  "Markers for text changes needing re-indenting.")
-(make-variable-buffer-local 'indentinator-changed-markers)
-
-(defvar indentinator-indenting nil
-  "Whether an indenting action is currently in progress.")
-(make-variable-buffer-local 'indentinator-indenting)
-
 (defvar indentinator-debug nil
   "Enables debugging output.")
+
+(defvar-local indentinator-start-marker (make-marker)
+  "Marks the start of the current indent run.")
+
+(defvar-local indentinator-current-marker nil
+  "The marker of the next indent action.")
+
+(defvar-local indentinator-no-indent-count 0
+  "Number of lines not changed.")
+
+(defvar-local indentinator-aborted-markers (list)
+  "Markers for `indentinator-current-marker' of aborted indents.")
+
+(defvar-local indentinator-changed-markers (list)
+  "Markers for text changes needing re-indenting.")
+
+(defvar-local indentinator-indenting nil
+  "Whether an indenting action is currently in progress.")
 
 ;;;###autoload
 (defun indentinator-toggle-debug ()
