@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/xendk/indentinator.svg?branch=master)](https://travis-ci.org/xendk/indentinator)
+[![Build status](https://img.shields.io/travis/xendk/indentinator.svg?style=for-the-badge)](https://travis-ci.org/xendk/indentinator)
+[![Codecov](https://img.shields.io/codecov/c/github/xendk/indentinator.svg?style=for-the-badge)](https://codecov.io/gh/xendk/indentinator)
 
 Indentinator
 ============
