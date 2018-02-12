@@ -12,4 +12,6 @@
  ;; For simulating idle time.
  (depends-on "with-simulated-input")
  ;; To quiet output in tests.
- (depends-on "shut-up"))
+ (depends-on "shut-up")
+ ;; Code coverage collection.
+ (depends-on "undercover"))
