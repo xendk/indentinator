@@ -29,3 +29,6 @@ install:
 script:
   # Run your tests
   - cask exec ecukes
+after_success:
+  # Upload coverage
+  - bash <(curl -s https://codecov.io/bash) -f coverage/report.json

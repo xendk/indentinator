@@ -28,6 +28,7 @@
         ;; forgets to run them?
         (progn (wsi-simulate-idle-time nil)
                (wsi-simulate-idle-time nil)
+               (wsi-simulate-idle-time nil)
                (wsi-simulate-idle-time nil))
       (error nil))))
 
