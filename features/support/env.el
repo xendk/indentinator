@@ -17,8 +17,7 @@
   ;; Track coverage, but don't send to coveralls (Travis will send it
   ;; to Codecov).
   (undercover "*.el"
-              (:report-file (f-join indentinator-root-path "coverage-final.json"))
-              (:send-report nil)))
+              (:report-type :codecov)))
 
 ;; Ensure that we don't load old byte-compiled versions
 (let ((load-prefer-newer t))
