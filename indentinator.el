@@ -243,7 +243,7 @@ Return whether the line changed."
       (goto-char (marker-position indentinator-current-marker))
       (when indentinator-debug
         (message "indentinator: indent %d" (marker-position indentinator-current-marker)))
-      (cl-letf (((symbol-function 'message) #'ignore))
+      (let ((inhibit-message t))
         (ignore-errors (indent-region (line-beginning-position) (line-end-position))))
       (not (= tick (buffer-chars-modified-tick))))))
 
