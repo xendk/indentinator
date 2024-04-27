@@ -85,6 +85,7 @@
   (interactive)
   (setq indentinator-debug (not indentinator-debug)))
 
+;;;###autoload
 (define-minor-mode indentinator-mode nil
   :lighter (:eval (if indentinator-idle-timer
                       (propertize " ->" 'face 'indentinator-progress-face)
