@@ -1,2 +1,5 @@
-.cask
 coverage-final.json*
+
+# Added automatically by ‘eldev init’.
+/.eldev
+/Eldev-local

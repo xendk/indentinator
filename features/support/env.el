@@ -11,8 +11,6 @@
 (defvar indentinator-root-path
   (f-parent indentinator-features-path))
 
-(add-to-list 'load-path indentinator-root-path)
-
 (when (require 'undercover nil t)
   ;; Track coverage, but don't send to coveralls (Travis will send it
   ;; to Codecov).
