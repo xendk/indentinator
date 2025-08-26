@@ -1,6 +1,6 @@
 ;;; indentinator.el --- Automatically indent code.   -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017  Thomas Fini Hansen
+;; Copyright (C) 2017-2025  Thomas Fini Hansen
 
 ;; Author: Thomas Fini Hansen <xen@xen.dk>
 ;; Created: December 22, 2017
