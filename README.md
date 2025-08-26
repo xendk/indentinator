@@ -1,8 +1,8 @@
-[![Build status](https://img.shields.io/travis/xendk/indentinator.svg?style=for-the-badge)](https://travis-ci.org/xendk/indentinator)
-[![Codecov](https://img.shields.io/codecov/c/github/xendk/indentinator.svg?style=for-the-badge)](https://codecov.io/gh/xendk/indentinator)
-
 Indentinator
 ============
+
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/xendk/indentinator/test.yml?branch=main&style=for-the-badge)](https://github.com/xendk/indentinator/actions?query=branch%3Amain+)
+[![Codecov](https://img.shields.io/codecov/c/github/xendk/indentinator?style=for-the-badge)](https://app.codecov.io/gh/xendk/indentinator)
 
 Indentinator is (yet another) mode that attempts to automatically
 indent your code as you edit.
