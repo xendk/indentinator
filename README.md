@@ -1,8 +1,8 @@
 Indentinator
 ============
 
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/xendk/indentinator/test.yml?branch=main&style=for-the-badge)](https://github.com/xendk/indentinator/actions?query=branch%3Amain+)
-[![Codecov](https://img.shields.io/codecov/c/github/xendk/indentinator?style=for-the-badge)](https://app.codecov.io/gh/xendk/indentinator)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/xendk/indentinator.el/test.yml?branch=main&style=for-the-badge)](https://github.com/xendk/indentinator.el/actions?query=branch%3Amain)
+[![Codecov](https://img.shields.io/codecov/c/github/xendk/indentinator.el?style=for-the-badge)](https://app.codecov.io/gh/xendk/indentinator.el)
 
 Indentinator is (yet another) mode that attempts to automatically
 indent your code as you edit.
@@ -35,7 +35,7 @@ Emacs 25.
 ``` emacs-lisp
 (use-package indentinator
   :hook ((emacs-lisp-mode php-mode js-mode css-mode ruby-mode) . indentinator-mode)
-  :straight (:host github :repo "xendk/indentinator"))
+  :straight (:host github :repo "xendk/indentinator.el"))
 ```
 
 [use-package]: https://github.com/jwiegley/use-package
