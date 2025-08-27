@@ -10,3 +10,6 @@
 (eldev-add-extra-dependencies 'test 'shut-up 'with-simulated-input)
 
 (setq eldev-undercover-config '(auto codecov dontsend))
+
+(setf eldev-standard-excludes
+      `(:or ,eldev-standard-excludes "GPL"))
