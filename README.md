@@ -51,7 +51,11 @@ running can be customized via the customize system.
 * [auto-indent-mode]
   Primarily indents code when yanked, but contains numerous bits and
   pieces, which explains the ~2500 lines of code.
-  
+
+* [snap-indent]
+  Successor to [auto-indent-mode], very small, but only indents on
+  yank and save.
+
 * [aggressive-indent-mode]
   Automatically re-indents code after changes to the buffer. A more
   modest <500 lines of code.
@@ -64,4 +68,5 @@ the brace from an `if` statement wont change the indentation of the
 next line, but the following.
 
 [auto-indent-mode]: https://github.com/mattfidler/auto-indent-mode.el
+[snap-indent]: https://github.com/jeffvalk/snap-indent/
 [aggressive-indent-mode]: https://github.com/Malabarba/aggressive-indent-mode
