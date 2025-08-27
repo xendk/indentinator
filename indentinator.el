@@ -1,11 +1,11 @@
-;;; indentinator.el --- Automatically indent code.   -*- lexical-binding: t; -*-
+;;; indentinator.el --- Automatically indent code   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017-2025  Thomas Fini Hansen
 
 ;; Author: Thomas Fini Hansen <xen@xen.dk>
 ;; Created: December 22, 2017
 ;; Version: 0.0.1
-;; Package-Requires: ((emacs "25") (seq))
+;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: convenience
 ;; URL: https://github.com/xendk/indentinator.el
 
