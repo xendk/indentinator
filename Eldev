@@ -12,6 +12,3 @@
 ;; Make checkdoc not require double space after period.
 (setq sentence-end-double-space nil)
 (setq eldev-undercover-config '(auto codecov dontsend))
-
-(setf eldev-standard-excludes
-      `(:or ,eldev-standard-excludes "GPL"))

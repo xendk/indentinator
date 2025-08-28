@@ -70,8 +70,3 @@ next line, but the following.
 [auto-indent-mode]: https://github.com/mattfidler/auto-indent-mode.el
 [snap-indent]: https://github.com/jeffvalk/snap-indent/
 [aggressive-indent-mode]: https://github.com/Malabarba/aggressive-indent-mode
-
-## License
-
-This project is released under the GPL v3 license. See `GPL` for
-details.
