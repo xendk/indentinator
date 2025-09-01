@@ -91,8 +91,8 @@
                       (propertize " ->" 'face 'indentinator-progress-face)
                     " ->"))
   (if indentinator-mode
-      (add-hook 'after-change-functions 'indentinator-after-change-function t t)
-    (remove-hook 'after-change-functions 'indentinator-after-change-function t)))
+      (add-hook 'after-change-functions #'indentinator-after-change-function t t)
+    (remove-hook 'after-change-functions #'indentinator-after-change-function t)))
 
 (defmacro indentinator-queue-timer (&optional init)
   "Add idle-timer. Set INIT to t if this is the initial call."
